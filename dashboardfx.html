@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StudioFX - Forex Education Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#0066CC",
+              secondary: "#4A5568",
+              dark: {
+                100: "#8A9AAC",
+                200: "#6B7A8C",
+                300: "#4A5568",
+                400: "#2D3748",
+                500: "#1A202C",
+                600: "#0D1117",
+              },
+              light: {
+                100: "#F5F4F0",
+                200: "#E5E5E5",
+                300: "#D4D4D4",
+              },
+              accent: {
+                blue: "#0066CC",
+                green: "#25D366",
+                red: "#FF3B30",
+              },
+            },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      window.addEventListener('load' , setInitials());
+    </script>
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+      background-color: #1A202C;
+      color: #F5F4F0;
+      font-family: 'Inter', sans-serif;
+      background-image: url('https://readdy.ai/api/search-image?query=A%20modern%2C%20minimalist%20office%20interior%20with%20sleek%20grey%20walls%20and%20subtle%20blue%20accents%2C%20creating%20a%20professional%20and%20sophisticated%20trading%20environment.%20The%20scene%20features%20clean%20lines%2C%20ambient%20lighting%2C%20and%20a%20sense%20of%20depth%2C%20perfect%20for%20a%20forex%20trading%20platform%20background.&width=1920&height=1080&seq=4&orientation=landscape');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      }
+      .content-overlay {
+      background-color: rgba(26, 32, 44, 0.95);
+      min-height: 100vh;
+      }
+      .gradient-border {
+      position: relative;
+      border-radius: 8px;
+      background: linear-gradient(to right, #0066CC, #0F2B45);
+      padding: 1px;
+      }
+      .gradient-border::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      padding: 1px;
+      background: linear-gradient(to right, #0066CC, #0F2B45);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+      background: #181818;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2A2A2A;
+      border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #0066CC;
+      }
+      .chart-container {
+      background: #181818;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .custom-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 22px;
+      }
+      .custom-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      }
+      .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2A2A2A;
+      transition: .4s;
+      border-radius: 34px;
+      }
+      .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 2px;
+      background-color: #F5F4F0;
+      transition: .4s;
+      border-radius: 50%;
+      }
+      input:checked + .switch-slider {
+      background-color: #0066CC;
+      }
+      input:checked + .switch-slider:before {
+      transform: translateX(20px);
+      }
+      .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      }
+      .logo-animation {
+      animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+      0% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 5px rgba(0, 102, 204, 0.3));
+      }
+      50% {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 15px rgba(0, 102, 204, 0.5));
+      }
+      100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 5px rgba(0, 102, 204, 0.3));
+      }
+      }
+      .progress-bar {
+      width: 200px;
+      height: 4px;
+      background-color: #2A2A2A;
+      border-radius: 2px;
+      margin-top: 20px;
+      overflow: hidden;
+      }
+      .progress {
+      height: 100%;
+      background-color: #0066CC;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s ease;
+      }
+      .custom-checkbox {
+      position: relative;
+      padding-left: 30px;
+      cursor: pointer;
+      user-select: none;
+      }
+      .custom-checkbox input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+      }
+      .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background-color: #2A2A2A;
+      border-radius: 4px;
+      }
+      .custom-checkbox:hover input ~ .checkmark {
+      background-color: #242424;
+      }
+      .custom-checkbox input:checked ~ .checkmark {
+      background-color: #0066CC;
+      }
+      .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      }
+      .custom-checkbox input:checked ~ .checkmark:after {
+      display: block;
+      }
+      .custom-checkbox .checkmark:after {
+      left: 7px;
+      top: 3px;
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      }
+      .custom-radio {
+      position: relative;
+      padding-left: 30px;
+      cursor: pointer;
+      user-select: none;
+      }
+      .custom-radio input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+      }
+      .radio-mark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 20px;
+      width: 20px;
+      background-color: #2A2A2A;
+      border-radius: 50%;
+      }
+      .custom-radio:hover input ~ .radio-mark {
+      background-color: #242424;
+      }
+      .custom-radio input:checked ~ .radio-mark {
+      background-color: #0066CC;
+      }
+      .radio-mark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      }
+      .custom-radio input:checked ~ .radio-mark:after {
+      display: block;
+      }
+      .custom-radio .radio-mark:after {
+      top: 6px;
+      left: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      }
+      .custom-range {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: #2A2A2A;
+      outline: none;
+      }
+      .custom-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0066CC;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+      }
+      .custom-range::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #0066CC;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+      }
+      .dropdown {
+      position: relative;
+      display: inline-block;
+      }
+      .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #1E1E1E;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 8px;
+      margin-top: 5px;
+      right: 0;
+      }
+      .dropdown-content a {
+      color: #F5F4F0;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: all 0.2s ease;
+      }
+      .dropdown-content a:hover {
+      background-color: #242424;
+      }
+      .dropdown:hover .dropdown-content {
+      display: block;
+      }
+      .tab-button {
+      background-color: transparent;
+      color: #D4D4D4;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      }
+      .tab-button.active {
+      color: #F5F4F0;
+      border-bottom: 2px solid #0066CC;
+      }
+      .tab-content {
+      display: none;
+      }
+      .tab-content.active {
+      display: block;
+      }
+      .currency-card {
+      background-color: #1E1E1E;
+      border-radius: 8px;
+      padding: 15px;
+      transition: all 0.3s ease;
+      }
+      .currency-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .pulse-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #25D366;
+      margin-right: 6px;
+      animation: pulse-animation 2s infinite;
+      }
+      @keyframes pulse-animation {
+      0% {
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+      }
+      70% {
+      box-shadow: 0 0 0 10px rgba(37, 211, 102, 0);
+      }
+      100% {
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
+      }
+      }
+      .setup-card {
+      background-color: #1E1E1E;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      }
+      .setup-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .setup-card .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      }
+      .vip-badge {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #121212;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+      input[type="number"] {
+      -moz-appearance: textfield;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div
+        class="logo-animation w-32 h-32 flex items-center justify-center mb-4"
+      >
+        <img
+           src="./images/studiofx.jpg"
+           
+          alt="StudioFX Logo"
+          class="w-full h-full object-contain"
+        />
+      </div>
+      <div class="text-xl font-bold text-light-100 mb-1">StudioFX</div>
+      <div class="text-sm text-light-300 mb-4">Precision in Every Trade</div>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+    <!-- Sidebar -->
+    <div class="flex h-screen overflow-hidden content-overlay">
+      <div
+        id="sidebar"
+        class="w-64 bg-dark-400 border-r border-dark-300 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out fixed md:relative h-full z-50"
+      >
+        <div class="p-4 flex items-center border-b border-dark-300">
+          <div class="font-['Pacifico'] text-2xl text-light-100 mr-2">
+            StudioFX
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="text-sm text-light-300 mb-2">MAIN</div>
+          <nav>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 bg-primary text-light-100"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-dashboard-line"></i>
+              </div>
+              <span>Dashboard</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-line-chart-line"></i>
+              </div>
+              <span>Market Analysis</span>
+            </a>
+            <a
+              href="/chat"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-signal-tower-line"></i>
+              </div>
+              <span>Signals</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-book-open-line"></i>
+              </div>
+              <span>Education</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-user-star-line"></i>
+              </div>
+              <span>VIP Mentorship</span>
+            </a>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-tools-line"></i>
+              </div>
+              <span>Trading Tools</span>
+            </a>
+          </nav>
+          <div class="text-sm text-light-300 mt-6 mb-2">ACCOUNT</div>
+          <nav>
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-user-line"></i>
+              </div>
+              
+              <span>Profile</span>
+            
+            </a>
+            
+            <a
+              href="#"
+              class="flex items-center py-2 px-3 rounded-button mb-1 text-light-300 hover:bg-dark-300"
+            >
+              <div class="w-6 h-6 flex items-center justify-center mr-3">
+                <i class="ri-settings-line"></i>
+              </div>
+              <span>Settings</span>
+            </a>
+          </nav>
+          <div class="mt-8">
+            <div class="gradient-border">
+              <div class="bg-dark-400 p-4 rounded-button">
+                <div class="text-light-100 font-medium mb-2">
+                  Upgrade to VIP
+                </div>
+                <div class="text-light-300 text-sm mb-3">
+                  Get access to premium signals and 1-on-1 mentorship
+                </div>
+                <button
+                  class="w-full bg-primary text-light-100 py-2 rounded-button whitespace-nowrap !rounded-button flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center mr-2">
+                    <i class="ri-vip-crown-line"></i>
+                  </div>
+                  <span>Upgrade Now</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Navigation -->
+        <header class="bg-dark-400 border-b border-dark-300">
+          <div class="flex items-center justify-between p-4">
+            <div class="flex items-center">
+              <button
+                id="menuToggle"
+                class="md:hidden mr-4 text-light-300 w-8 h-8 flex items-center justify-center"
+              >
+                <i class="ri-menu-line text-xl"></i>
+              </button>
+              <div class="font-['Pacifico'] text-2xl text-light-100 md:hidden">
+                StudioFX
+              </div>
+            </div>
+            <div class="relative flex-1 max-w-xl mx-4 hidden md:block">
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none w-5 h-5 text-light-300"
+              >
+                <i class="ri-search-line"></i>
+              </div>
+              <input
+                type="text"
+                class="bg-dark-300 text-light-100 w-full pl-10 pr-4 py-2 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-secondary"
+                placeholder="Search for signals, courses, tools..."
+              />
+            </div>
+
+<!-- Dropdown Menu Container -->
+<div class="relative group inline-block text-left">
+  <!-- Trigger Button -->
+  <button
+    class="inline-flex items-center px-4 py-2 bg-transparent border-0 border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none"
+  >
+    
+    <i class="ri-arrow-down-s-line ml-2 text-gray-500"></i>
+  </button>
+
+  <!-- Dropdown Menu -->
+  <div
+    class="absolute z-10 mt-2 w-44 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 group-hover:opacity-100 group-hover:visible invisible transition-all duration-200"
+  >
+    <a
+      href="adminlogin.html"
+      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+    >
+      Login as Admin
+    </a>
+    <a
+      href="indexlogin.html"
+      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+    >
+      home
+    </a>
+    <a
+      href="chat.html"
+      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg"
+    >
+      Signals
+    </a>
+  </div>
+</div>
+<!-- end of dropdown -->
+
+            <div class="flex items-center">
+              <button
+                class="w-8 h-8 flex items-center justify-center text-light-300 mr-2"
+              >
+                <i class="ri-search-line text-xl md:hidden"></i>
+              </button>
+              <button
+                class="w-8 h-8 flex items-center justify-center text-light-300 mr-2 relative"
+              >
+                <i class="ri-notification-3-line text-xl"></i>
+                <span
+                  class="absolute top-0 right-0 w-2 h-2 bg-accent-red rounded-full"
+                ></span>
+              </button>
+              <div class="dropdown">
+                <button class="flex items-center">
+                  <div id="userp"
+                    class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-light-100 font-medium mr-2"
+                  id="profileInitials">
+                  <span id="pI1"></span>
+                  </div>
+                  <div class="hidden md:block">
+                    <div class="text-light-100 text-sm font-medium" id="f1">
+                      
+                    </div>
+                    <div class="text-light-300 text-xs">VIP Member</div>
+                  </div>
+                  <div
+                    class="w-5 h-5 flex items-center justify-center text-light-300 ml-1"
+                  >
+                    <i class="ri-arrow-down-s-line"></i>
+                  </div>
+                </button>
+                <div class="dropdown-content">
+
+
+                  <a href="#" class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-user-line"></i>
+                    </div>
+                    <span>Profile</span>
+                  </a>
+
+
+
+                  
+                  <a href="#" class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-settings-line"></i>
+                    </div>
+                    <span>Settings</span>
+                  </a>
+                  <a href="#" class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-customer-service-line"></i>
+                    </div>
+                    <span>Support</span>
+                  </a>
+                  <div class="border-t border-dark-300 my-1"></div>
+                  <a href="#" class="flex items-center">
+                    <div class="w-5 h-5 flex items-center justify-center mr-2">
+                      <i class="ri-logout-box-line"></i>
+                    </div>
+                    <span>Logout</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <!-- Main Content Area -->
+        <main
+          class="flex-1 overflow-y-auto custom-scrollbar bg-dark-500 p-4 md:p-6"
+        >
+          <div class="mb-6">
+            <h1 class="text-2xl font-bold text-light-100 mb-1">
+              Welcome back, <span id="fnme"></span>
+            </h1>
+            <p class="text-light-300">
+              <span id="tme"></span>| Your dashboard overview
+            </p>
+          </div>
+          <!-- Market Overview -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+          >
+            <div class="currency-card">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-light-300">EUR/USD</div>
+                <div
+                  class="text-xs px-2 py-0.5 bg-accent-green bg-opacity-20 text-accent-green rounded-full"
+                >
+                  +0.23%
+                </div>
+              </div>
+              <div class="text-xl font-bold text-light-100">1.0845</div>
+              <div class="h-10 mt-2" id="chart1"></div>
+            </div>
+            <div class="currency-card">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-light-300">GBP/USD</div>
+                <div
+                  class="text-xs px-2 py-0.5 bg-accent-green bg-opacity-20 text-accent-green rounded-full"
+                >
+                  +0.15%
+                </div>
+              </div>
+              <div class="text-xl font-bold text-light-100">1.2762</div>
+              <div class="h-10 mt-2" id="chart2"></div>
+            </div>
+            <div class="currency-card">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-light-300">USD/JPY</div>
+                <div
+                  class="text-xs px-2 py-0.5 bg-accent-red bg-opacity-20 text-accent-red rounded-full"
+                >
+                  -0.11%
+                </div>
+              </div>
+              <div class="text-xl font-bold text-light-100">154.32</div>
+              <div class="h-10 mt-2" id="chart3"></div>
+            </div>
+            <div class="currency-card">
+              <div class="flex justify-between items-center mb-2">
+                <div class="text-sm text-light-300">XAU/USD</div>
+                <div
+                  class="text-xs px-2 py-0.5 bg-accent-green bg-opacity-20 text-accent-green rounded-full"
+                >
+                  +0.42%
+                </div>
+              </div>
+              <div class="text-xl font-bold text-light-100">2,342.65</div>
+              <div class="h-10 mt-2" id="chart4"></div>
+            </div>
+          </div>
+          <!-- Main Content Sections -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2">
+              <!-- Latest Setups -->
+              <div class="bg-dark-400 rounded-lg p-5 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-lg font-bold text-light-100">
+                    Latest Trade Setups
+                  </h2>
+                  <button
+                    class="text-secondary text-sm flex items-center whitespace-nowrap !rounded-button"
+                  >
+                    View All
+                    <div class="w-4 h-4 flex items-center justify-center ml-1">
+                      <i class="ri-arrow-right-s-line"></i>
+                    </div>
+                  </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="setup-card">
+                    <div class="relative">
+                      <img
+                        src="https://readdy.ai/api/search-image?query=A%20professional%20forex%20trading%20chart%20showing%20EUR%2FUSD%20currency%20pair%20with%20clear%20technical%20analysis%20patterns%2C%20including%20support%20and%20resistance%20levels%2C%20trend%20lines%2C%20and%20order%20blocks%20marked.%20The%20chart%20should%20have%20a%20dark%20background%20with%20blue%20and%20white%20candlesticks%2C%20showing%20a%20potential%20bullish%20setup%20with%20clear%20entry%20and%20exit%20points%20marked.&width=600&height=300&seq=2&orientation=landscape"
+                        alt="EUR/USD Setup"
+                        class="w-full h-40 object-cover object-top rounded-t-lg"
+                      />
+                      <div class="absolute top-2 right-2">
+                        <span class="vip-badge">VIP</span>
+                      </div>
+                    </div>
+                    <div class="p-4">
+                      <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-light-100">
+                          EUR/USD Bullish Setup
+                        </h3>
+                        <div class="text-xs text-light-300">2h ago</div>
+                      </div>
+                      <p class="text-sm text-light-300 mb-3">
+                        Bullish order block with liquidity sweep above 1.0830.
+                        Looking for entries after FVG fill.
+                      </p>
+                      <div class="mb-3">
+                        <span class="tag bg-dark-300 text-light-300"
+                          >Entry: 1.0835</span
+                        >
+                        <span class="tag bg-dark-300 text-accent-green"
+                          >TP: 1.0890</span
+                        >
+                        <span class="tag bg-dark-300 text-accent-red"
+                          >SL: 1.0810</span
+                        >
+                      </div>
+                      <button
+                        class="w-full bg-primary text-light-100 py-2 rounded-button whitespace-nowrap !rounded-button flex items-center justify-center"
+                      >
+                        <div
+                          class="w-5 h-5 flex items-center justify-center mr-2"
+                        >
+                          <i class="ri-eye-line"></i>
+                        </div>
+                        <span>View Analysis</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="setup-card">
+                    <div class="relative">
+                      <img
+                        src="https://readdy.ai/api/search-image?query=A%20professional%20forex%20trading%20chart%20showing%20GBP%2FJPY%20currency%20pair%20with%20clear%20technical%20analysis%20patterns%2C%20including%20support%20and%20resistance%20levels%2C%20trend%20lines%2C%20and%20order%20blocks%20marked.%20The%20chart%20should%20have%20a%20dark%20background%20with%20red%20and%20white%20candlesticks%2C%20showing%20a%20potential%20bearish%20setup%20with%20clear%20entry%20and%20exit%20points%20marked.&width=600&height=300&seq=3&orientation=landscape"
+                        alt="GBP/JPY Setup"
+                        class="w-full h-40 object-cover object-top rounded-t-lg"
+                      />
+                    </div>
+                    <div class="p-4">
+                      <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-light-100">
+                          GBP/JPY Bearish Setup
+                        </h3>
+                        <div class="text-xs text-light-300">5h ago</div>
+                      </div>
+                      <p class="text-sm text-light-300 mb-3">
+                        Bearish momentum after breaking key support. Watch for
+                        retest of 191.50 zone.
+                      </p>
+                      <div class="mb-3">
+                        <span class="tag bg-dark-300 text-light-300"
+                          >Entry: 191.40</span
+                        >
+                        <span class="tag bg-dark-300 text-accent-green"
+                          >TP: 190.80</span
+                        >
+                        <span class="tag bg-dark-300 text-accent-red"
+                          >SL: 191.70</span
+                        >
+                      </div>
+                      <button
+                        class="w-full bg-primary text-light-100 py-2 rounded-button whitespace-nowrap !rounded-button flex items-center justify-center"
+                      >
+                        <div
+                          class="w-5 h-5 flex items-center justify-center mr-2"
+                        >
+                          <i class="ri-eye-line"></i>
+                        </div>
+                        <span>View Analysis</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Market Analysis -->
+              <div class="bg-dark-400 rounded-lg p-5">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-lg font-bold text-light-100">
+                    Market Analysis
+                  </h2>
+                  <div class="flex">
+                    <button class="tab-button active" data-tab="daily">
+                      Daily
+                    </button>
+                    <button class="tab-button" data-tab="weekly">Weekly</button>
+                    <button class="tab-button" data-tab="monthly">
+                      Monthly
+                    </button>
+                  </div>
+                </div>
+                <div class="tab-content active" id="daily">
+                  <div class="chart-container h-80" id="dailyChart"></div>
+                  <div class="mt-4">
+                    <h3 class="font-medium text-light-100 mb-2">
+                      Daily Market Summary
+                    </h3>
+                    <p class="text-sm text-light-300 mb-3">
+                      EUR/USD continues its bullish momentum after breaking
+                      above the 1.0820 resistance level. The pair is now
+                      targeting the 1.0880-1.0900 zone, with strong support at
+                      1.0780. Watch for potential pullbacks to the 1.0820 area
+                      for long entries.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Support Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.0820 (Previous Resistance)</li>
+                          <li class="mb-1">• 1.0780 (Daily Order Block)</li>
+                          <li>• 1.0750 (Weekly Structure)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Resistance Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.0880 (Daily Supply Zone)</li>
+                          <li class="mb-1">• 1.0900 (Psychological Level)</li>
+                          <li>• 1.0950 (Monthly High)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content" id="weekly">
+                  <div class="chart-container h-80" id="weeklyChart"></div>
+                  <div class="mt-4">
+                    <h3 class="font-medium text-light-100 mb-2">
+                      Weekly Market Summary
+                    </h3>
+                    <p class="text-sm text-light-300 mb-3">
+                      EUR/USD has been in a strong uptrend on the weekly
+                      timeframe, breaking above the descending trendline that
+                      had been in place since early 2023. The pair is showing
+                      signs of strength with higher lows forming, indicating
+                      potential for further upside in the coming weeks.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Support Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.0750 (Weekly Structure)</li>
+                          <li class="mb-1">• 1.0680 (Weekly Order Block)</li>
+                          <li>• 1.0600 (Monthly Structure)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Resistance Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.0950 (Monthly High)</li>
+                          <li class="mb-1">• 1.1000 (Psychological Level)</li>
+                          <li>• 1.1100 (2023 High)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-content" id="monthly">
+                  <div class="chart-container h-80" id="monthlyChart"></div>
+                  <div class="mt-4">
+                    <h3 class="font-medium text-light-100 mb-2">
+                      Monthly Market Summary
+                    </h3>
+                    <p class="text-sm text-light-300 mb-3">
+                      On the monthly timeframe, EUR/USD is attempting to break
+                      out of a consolidation phase that has been in place since
+                      mid-2022. The pair is showing signs of a potential
+                      long-term trend reversal, with the monthly RSI breaking
+                      above its midline for the first time in over a year.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Support Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.0600 (Monthly Structure)</li>
+                          <li class="mb-1">• 1.0500 (Psychological Level)</li>
+                          <li>• 1.0350 (2022 Low)</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="text-sm text-light-300 mb-1">
+                          Key Resistance Levels
+                        </div>
+                        <ul class="text-sm text-light-100">
+                          <li class="mb-1">• 1.1100 (2023 High)</li>
+                          <li class="mb-1">• 1.1250 (Monthly Supply Zone)</li>
+                          <li>• 1.1500 (2021 High)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Right Column -->
+            <div>
+              <!-- Profile Card -->
+              <div class="bg-dark-400 rounded-lg p-5 mb-6">
+                <div class="flex items-center mb-4">
+                  <div
+                    class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-light-100 text-xl font-medium mr-4"
+                  id="pI2">
+                    
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-light-100" id="f" ></h3>
+                    <div class="flex items-center">
+                      <div
+                        class="text-xs px-2 py-0.5 bg-secondary bg-opacity-20 text-secondary rounded-full mr-2"
+                      >
+                        VIP Member
+                      </div>
+                      <div class="text-xs text-light-300">Since May 2025</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <div class="text-sm text-light-300 mb-2">
+                    Membership Status
+                  </div>
+                  <div class="w-full bg-dark-300 rounded-full h-2.5">
+                    <div
+                      class="bg-secondary h-2.5 rounded-full"
+                      style="width: 75%"
+                    ></div>
+                  </div>
+                  <div class="flex justify-between text-xs mt-1">
+                    <div class="text-light-300">30 days remaining</div>
+                    <div class="text-secondary">Renews on Jul 20, 2025</div>
+                  </div>
+                </div>
+                <button
+                  class="w-full bg-primary text-light-100 py-2 rounded-button mb-3 whitespace-nowrap !rounded-button flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center mr-2">
+                    <i class="ri-refresh-line"></i>
+                  </div>
+                  <span>Renew Membership</span>
+                </button>
+                <button
+                  class="w-full bg-dark-300 text-light-100 py-2 rounded-button whitespace-nowrap !rounded-button flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center mr-2">
+                    <i class="ri-user-settings-line"></i>
+                  </div>
+                  <span>Manage Account</span>
+                </button>
+              </div>
+              <!-- Upcoming Sessions -->
+              <div class="bg-dark-400 rounded-lg p-5 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-lg font-bold text-light-100">
+                    Upcoming Sessions
+                  </h2>
+                  <button
+                    class="text-secondary text-sm flex items-center whitespace-nowrap !rounded-button"
+                  >
+                    View All
+                    <div class="w-4 h-4 flex items-center justify-center ml-1">
+                      <i class="ri-arrow-right-s-line"></i>
+                    </div>
+                  </button>
+                </div>
+                <div class="mb-4 pb-4 border-b border-dark-300">
+                  <div class="flex items-center mb-2">
+                    <div
+                      class="w-10 h-10 rounded-full bg-dark-300 flex items-center justify-center text-light-100 mr-3"
+                    >
+                      <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-live-line"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-light-100">
+                        Weekly Market Briefing
+                      </h3>
+                      <div class="text-xs text-light-300">Live Session</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-3">
+                    <div class="flex items-center text-sm text-light-300">
+                      <div
+                        class="w-4 h-4 flex items-center justify-center mr-1"
+                      >
+                        <i class="ri-calendar-line"></i>
+                      </div>
+                      <span>Jun 23, 2025</span>
+                    </div>
+                    <div class="flex items-center text-sm text-light-300">
+                      <div
+                        class="w-4 h-4 flex items-center justify-center mr-1"
+                      >
+                        <i class="ri-time-line"></i>
+                      </div>
+                      <span>09:00 AM EST</span>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="pulse-dot"></div>
+                      <span class="text-xs text-accent-green">Scheduled</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mb-4 pb-4 border-b border-dark-300">
+                  <div class="flex items-center mb-2">
+                    <div
+                      class="w-10 h-10 rounded-full bg-dark-300 flex items-center justify-center text-light-100 mr-3"
+                    >
+                      <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-user-voice-line"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-light-100">
+                        1-on-1 Mentorship Call
+                      </h3>
+                      <div class="text-xs text-light-300">Private Session</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-3">
+                    <div class="flex items-center text-sm text-light-300">
+                      <div
+                        class="w-4 h-4 flex items-center justify-center mr-1"
+                      >
+                        <i class="ri-calendar-line"></i>
+                      </div>
+                      <span>Jun 25, 2025</span>
+                    </div>
+                    <div class="flex items-center text-sm text-light-300">
+                      <div
+                        class="w-4 h-4 flex items-center justify-center mr-1"
+                      >
+                        <i class="ri-time-line"></i>
+                      </div>
+                      <span>02:30 PM EST</span>
+                    </div>
+                    <div class="flex items-center">
+                      <div class="pulse-dot"></div>
+                      <span class="text-xs text-accent-green">Confirmed</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="w-full bg-dark-300 text-light-100 py-2 rounded-button whitespace-nowrap !rounded-button flex items-center justify-center"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center mr-2">
+                    <i class="ri-calendar-check-line"></i>
+                  </div>
+                  <span>Book New Session</span>
+                </button>
+              </div>
+              <!-- Trading Tools -->
+              <div class="bg-dark-400 rounded-lg p-5">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-lg font-bold text-light-100">
+                    Trading Tools
+                  </h2>
+                </div>
+                <div class="mb-4 pb-4 border-b border-dark-300">
+                  <h3 class="font-medium text-light-100 mb-2">
+                    Position Calculator
+                  </h3>
+                  <div class="mb-3">
+                    <label class="text-sm text-light-300 block mb-1"
+                      >Account Balance</label
+                    >
+                    <div class="relative">
+                      <div
+                        class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-light-300"
+                      >
+                        <div class="w-4 h-4 flex items-center justify-center">
+                          <i class="ri-money-dollar-circle-line"></i>
+                        </div>
+                      </div>
+                      <input
+                        type="number"
+                        value="10000"
+                        class="bg-dark-300 text-light-100 w-full pl-10 pr-4 py-2 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-secondary"
+                      />
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label class="text-sm text-light-300 block mb-1"
+                      >Risk Percentage</label
+                    >
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="5"
+                      step="0.1"
+                      value="1"
+                      class="custom-range"
+                      id="riskSlider"
+                    />
+                    <div
+                      class="flex justify-between text-xs text-light-300 mt-1"
+                    >
+                      <span>0.1%</span>
+                      <span id="riskValue">1%</span>
+                      <span>5%</span>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <label class="text-sm text-light-300 block mb-1"
+                        >Entry Price</label
+                      >
+                      <input
+                        type="number"
+                        value="1.0845"
+                        class="bg-dark-300 text-light-100 w-full px-4 py-2 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-secondary"
+                      />
+                    </div>
+                    <div>
+                      <label class="text-sm text-light-300 block mb-1"
+                        >Stop Loss</label
+                      >
+                      <input
+                        type="number"
+                        value="1.0810"
+                        class="bg-dark-300 text-light-100 w-full px-4 py-2 rounded-button border-none focus:outline-none focus:ring-2 focus:ring-secondary"
+                      />
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="bg-dark-300 p-3 rounded-lg">
+                      <div class="text-sm text-light-300 mb-1">Risk Amount</div>
+                      <div class="text-lg font-bold text-light-100">
+                        $100.00
+                      </div>
+                    </div>
+                    <div class="bg-dark-300 p-3 rounded-lg">
+                      <div class="text-sm text-light-300 mb-1">
+                        Position Size
+                      </div>
+                      <div class="text-lg font-bold text-light-100">
+                        0.28 Lots
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <h3 class="font-medium text-light-100 mb-2">
+                    Economic Calendar
+                  </h3>
+                  <div class="text-sm text-light-300 mb-3">
+                    Upcoming high-impact events
+                  </div>
+                  <div class="mb-3 pb-3 border-b border-dark-300">
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center">
+                        <div
+                          class="w-6 h-6 flex items-center justify-center mr-2 text-accent-red"
+                        >
+                          <i class="ri-fire-fill"></i>
+                        </div>
+                        <span class="text-light-100">FOMC Statement</span>
+                      </div>
+                      <div class="text-xs text-light-300">Jun 24, 2:00 PM</div>
+                    </div>
+                    <div class="text-xs text-light-300">USD • High Impact</div>
+                  </div>
+                  <div class="mb-3 pb-3 border-b border-dark-300">
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center">
+                        <div
+                          class="w-6 h-6 flex items-center justify-center mr-2 text-accent-red"
+                        >
+                          <i class="ri-fire-fill"></i>
+                        </div>
+                        <span class="text-light-100">US CPI m/m</span>
+                      </div>
+                      <div class="text-xs text-light-300">Jun 26, 8:30 AM</div>
+                    </div>
+                    <div class="text-xs text-light-300">USD • High Impact</div>
+                  </div>
+                  <div>
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center">
+                        <div
+                          class="w-6 h-6 flex items-center justify-center mr-2 text-accent-green"
+                        >
+                          <i class="ri-fire-line"></i>
+                        </div>
+                        <span class="text-light-100">ECB President Speech</span>
+                      </div>
+                      <div class="text-xs text-light-300">Jun 27, 10:00 AM</div>
+                    </div>
+                    <div class="text-xs text-light-300">
+                      EUR • Medium Impact
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script id="mobileMenuScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.createElement("div");
+        overlay.className = "fixed inset-0 bg-black bg-opacity-50 z-40 hidden";
+        document.body.appendChild(overlay);
+        function toggleMenu() {
+          const isOpen = !sidebar.classList.contains("-translate-x-full");
+          sidebar.classList.toggle("-translate-x-full");
+          overlay.classList.toggle("hidden");
+
+          if (!isOpen) {
+            document.body.style.overflow = "hidden";
+          } else {
+            document.body.style.overflow = "";
+          }
+        }
+        menuToggle.addEventListener("click", toggleMenu);
+        overlay.addEventListener("click", toggleMenu);
+        // Close menu on window resize if mobile menu is open
+        window.addEventListener("resize", () => {
+          if (
+            window.innerWidth >= 768 &&
+            !sidebar.classList.contains("-translate-x-full")
+          ) {
+            toggleMenu();
+          }
+        });
+      });
+    </script>
+    <script id="loaderScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        const loader = document.getElementById("loader");
+        const progress = document.getElementById("progress");
+        let width = 0;
+        const interval = setInterval(function () {
+          if (width >= 100) {
+            clearInterval(interval);
+            setTimeout(function () {
+              loader.style.opacity = "0";
+              setTimeout(function () {
+                loader.style.display = "none";
+              }, 500);
+            }, 500);
+          } else {
+            width += 5;
+            progress.style.width = width + "%";
+          }
+        }, 100);
+      });
+    </script>
+    <script id="miniChartsScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mini Charts
+        function createMiniChart(elementId, data, color, isUp) {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+          let chart = null;
+          try {
+            chart = echarts.init(element);
+            const option = {
+              animation: false,
+              grid: {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0,
+              },
+              xAxis: {
+                type: "category",
+                show: false,
+                data: Array.from({ length: data.length }, (_, i) => i),
+              },
+              yAxis: {
+                type: "value",
+                show: false,
+              },
+              series: [
+                {
+                  data: data,
+                  type: "line",
+                  showSymbol: false,
+                  smooth: true,
+                  lineStyle: {
+                    color: color,
+                    width: 2,
+                  },
+                  areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                      { offset: 0, color: color + "30" },
+                      { offset: 1, color: color + "00" },
+                    ]),
+                  },
+                },
+              ],
+            };
+            chart.setOption(option);
+            // Handle window resize
+            window.addEventListener("resize", function () {
+              if (chart) {
+                chart.resize();
+              }
+            });
+          } catch (error) {
+            console.warn(`Failed to initialize chart ${elementId}:`, error);
+          }
+        }
+        // Generate random data
+        function generateData(length, trend) {
+          let result = [];
+          let value = 100;
+          for (let i = 0; i < length; i++) {
+            // Add some randomness but follow the trend direction
+            const change = (Math.random() - (trend ? 0.45 : 0.55)) * 5;
+            value += change;
+            value = Math.max(80, Math.min(120, value)); // Keep within bounds
+            result.push(value);
+          }
+          return result;
+        }
+        // Create mini charts
+        createMiniChart(
+          "chart1",
+          generateData(20, true),
+          "rgba(37, 211, 102, 1)",
+          true,
+        );
+        createMiniChart(
+          "chart2",
+          generateData(20, true),
+          "rgba(37, 211, 102, 1)",
+          true,
+        );
+        createMiniChart(
+          "chart3",
+          generateData(20, false),
+          "rgba(255, 59, 48, 1)",
+          false,
+        );
+        createMiniChart(
+          "chart4",
+          generateData(20, true),
+          "rgba(37, 211, 102, 1)",
+          true,
+        );
+      });
+    </script>
+    <script id="mainChartsScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Main Charts
+        function createMainChart(elementId, title) {
+          const element = document.getElementById(elementId);
+          if (!element) return;
+          let chart = null;
+          try {
+            chart = echarts.init(element);
+            // Generate data
+            function generateOHLC(count) {
+              const data = [];
+              let open = 1.08 + Math.random() * 0.01;
+              for (let i = 0; i < count; i++) {
+                const close = open + (Math.random() - 0.5) * 0.005;
+                const high = Math.max(open, close) + Math.random() * 0.002;
+                const low = Math.min(open, close) - Math.random() * 0.002;
+                data.push([i, open, close, low, high]);
+                open = close;
+              }
+              return data;
+            }
+            const data = generateOHLC(30);
+            const option = {
+              animation: false,
+              tooltip: {
+                trigger: "axis",
+                axisPointer: {
+                  type: "cross",
+                },
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                borderColor: "#ccc",
+                borderWidth: 1,
+                textStyle: {
+                  color: "#333",
+                },
+                formatter: function (params) {
+                  const data = params[0].data;
+                  return [
+                    "EUR/USD: " + title,
+                    "Open: " + data[1].toFixed(4),
+                    "Close: " + data[2].toFixed(4),
+                    "Low: " + data[3].toFixed(4),
+                    "High: " + data[4].toFixed(4),
+                  ].join("<br/>");
+                },
+              },
+              grid: {
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 20,
+              },
+              xAxis: {
+                type: "category",
+                data: Array.from({ length: data.length }, (_, i) => i),
+                axisLine: {
+                  lineStyle: {
+                    color: "#555",
+                  },
+                },
+                axisTick: {
+                  show: false,
+                },
+                axisLabel: {
+                  color: "#999",
+                  formatter: function (value, index) {
+                    // Show only a few labels
+                    return index % 5 === 0 ? value : "";
+                  },
+                },
+                splitLine: {
+                  show: false,
+                },
+              },
+              yAxis: {
+                scale: true,
+                splitNumber: 4,
+                axisLine: {
+                  lineStyle: {
+                    color: "#555",
+                  },
+                },
+                splitLine: {
+                  show: true,
+                  lineStyle: {
+                    color: "#2A2A2A",
+                    type: "dashed",
+                  },
+                },
+                axisLabel: {
+                  color: "#999",
+                  formatter: function (value) {
+                    return value.toFixed(4);
+                  },
+                },
+              },
+              series: [
+                {
+                  type: "candlestick",
+                  data: data.map((item) => [item[1], item[4], item[3], item[2]]),
+                  itemStyle: {
+                    color: "rgba(87, 181, 231, 1)",
+                    color0: "rgba(252, 141, 98, 1)",
+                    borderColor: "rgba(87, 181, 231, 1)",
+                    borderColor0: "rgba(252, 141, 98, 1)",
+                  },
+                },
+                {
+                  name: "MA5",
+                  type: "line",
+                  data: calculateMA(5, data),
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                    width: 2,
+                    color: "rgba(141, 211, 199, 1)",
+                  },
+                },
+                {
+                  name: "MA10",
+                  type: "line",
+                  data: calculateMA(10, data),
+                  smooth: true,
+                  showSymbol: false,
+                  lineStyle: {
+                    width: 2,
+                    color: "rgba(251, 191, 114, 1)",
+                  },
+                },
+              ],
+            };
+            function calculateMA(dayCount, data) {
+              const result = [];
+              for (let i = 0; i < data.length; i++) {
+                if (i < dayCount - 1) {
+                  result.push("-");
+                  continue;
+                }
+                let sum = 0;
+                for (let j = 0; j < dayCount; j++) {
+                  sum += data[i - j][2];
+                }
+                result.push((sum / dayCount).toFixed(4));
+              }
+              return result;
+            }
+            chart.setOption(option);
+            // Handle window resize
+            window.addEventListener("resize", function () {
+              if (chart) {
+                chart.resize();
+              }
+            });
+          } catch (error) {
+            console.warn(`Failed to initialize chart ${elementId}:`, error);
+          }
+        }
+        // Initialize charts with error handling
+        try {
+          createMainChart("dailyChart", "Daily");
+          createMainChart("weeklyChart", "Weekly");
+          createMainChart("monthlyChart", "Monthly");
+        } catch (error) {
+          console.warn("Failed to initialize main charts:", error);
+        }
+      });
+    </script>
+    <script id="tabsScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        try {
+          // Tabs
+          const tabButtons = document.querySelectorAll(".tab-button");
+          const tabContents = document.querySelectorAll(".tab-content");
+          if (!tabButtons.length || !tabContents.length) return;
+          tabButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+              // Remove active class from all buttons and contents
+              tabButtons.forEach((btn) => btn.classList.remove("active"));
+              tabContents.forEach((content) => content.classList.remove("active"));
+              // Add active class to clicked button and corresponding content
+              button.classList.add("active");
+              const tabId = button.getAttribute("data-tab");
+              document.getElementById(tabId).classList.add("active");
+            });
+          });
+        } catch (error) {
+          console.warn("Failed to initialize tabs:", error);
+        }
+      });
+    </script>
+    <script id="sliderScript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Risk Slider
+        const riskSlider = document.getElementById("riskSlider");
+        const riskValue = document.getElementById("riskValue");
+        if (riskSlider && riskValue) {
+          riskSlider.addEventListener("input", function () {
+            riskValue.textContent = this.value + "%";
+          });
+        }
+      });
+    </script>
+
+<script>
+  const fullname = localStorage.getItem("fname");
+  const nme = fullname.toUpperCase();
+  document.getElementById("fnme").textContent = nme ;
+    document.getElementById("f").textContent = nme ;
+  document.getElementById("f1").textContent = nme ;
+
+</script>
+    
+<script>
+  function getInitials(name) {
+    const words = name.trim().split(" ");
+    const initials = words.map(word => word[0].toUpperCase()).join("");
+    return initials;
+  }
+
+  const fullName = localStorage.getItem("fname");
+  
+
+  if (fullName) {
+    const initials = getInitials(fullName);
+    
+    document.getElementById("pI1").textContent = initials;
+    document.getElementById("pI2").textContent = initials;
+    
+  } else {
+    document.getElementById("profileInitials").textContent = "??";
+  }
+</script>
+  <script>
+     setInterval(() => {
+      const d = new Date().toLocaleString();
+    document.getElementById("tme").innerText = d ;
+     }, 1000)
+  </script>
+
+ 
+  </body>
+</html>

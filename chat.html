@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Room</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: "#4361ee", secondary: "#3f37c9" },
+            borderRadius: {
+              none: "0px",
+              sm: "4px",
+              DEFAULT: "8px",
+              md: "12px",
+              lg: "16px",
+              xl: "20px",
+              "2xl": "24px",
+              "3xl": "32px",
+              full: "9999px",
+              button: "8px",
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
+    />
+    <style>
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+      body {
+          font-family: 'Inter', sans-serif;
+          overflow-x: hidden;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+      }
+      .chat-message-in {
+          border-top-left-radius: 0;
+      }
+      .chat-message-out {
+          border-top-right-radius: 0;
+      }
+      .signal-card {
+          transition: transform 0.2s ease-in-out;
+      }
+      .signal-card:hover {
+          transform: translateY(-4px);
+      }
+      .typing-indicator span {
+          animation: typingDot 1.4s infinite ease-in-out;
+          background-color: #606060;
+          border-radius: 50%;
+          display: inline-block;
+          height: 7px;
+          margin-right: 4px;
+          width: 7px;
+      }
+      .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+      .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+      .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes typingDot {
+          0%, 60%, 100% { transform: translateY(0); }
+          30% { transform: translateY(-5px); }
+      }
+      .custom-switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 24px;
+      }
+      .custom-switch input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+      }
+      .switch-slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 24px;
+      }
+      .switch-slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+      }
+      input:checked + .switch-slider {
+          background-color: #4361ee;
+      }
+      input:checked + .switch-slider:before {
+          transform: translateX(20px);
+      }
+      .toast-notification {
+          animation: slideIn 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards;
+          transform: translateX(100%);
+          opacity: 0;
+      }
+      @keyframes slideIn {
+          to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes fadeOut {
+          to { opacity: 0; transform: translateY(-10px); }
+      }
+      .custom-radio {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+      }
+      .custom-radio-input {
+          appearance: none;
+          width: 20px;
+          height: 20px;
+          border: 2px solid #d1d5db;
+          border-radius: 50%;
+          outline: none;
+          position: relative;
+          margin-right: 8px;
+          cursor: pointer;
+      }
+      .custom-radio-input:checked {
+          border-color: #4361ee;
+      }
+      .custom-radio-input:checked::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 10px;
+          height: 10px;
+          background-color: #4361ee;
+          border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 h-screen flex overflow-hidden">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-[#1E1E2D] text-white flex flex-col">
+      <!-- Profile Section -->
+      <div class="p-4 border-b border-gray-700 flex items-center space-x-3">
+        <div
+          class="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
+        >
+          <span class="font-semibold text-white" id="P2"></span>
+        </div>
+        <div>
+          <h3 class="font-medium text-sm" id="F1"></h3>
+          <p class="text-xs text-gray-400">Admin</p>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="flex-1 overflow-y-auto scrollbar-hide py-4">
+        <ul class="space-y-1 px-2">
+          <li>
+            <a
+              href="dashboardfx.html"
+              class="flex items-center px-4 py-2.5 text-gray-400 rounded-button hover:bg-gray-800 transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-dashboard-line"></i>
+              </div>
+              <span class="text-sm">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-2.5 text-white bg-primary/10 rounded-button transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-message-3-line"></i>
+              </div>
+              <span class="text-sm">Chat Room</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-2.5 text-gray-400 rounded-button hover:bg-gray-800 transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-line-chart-line"></i>
+              </div>
+              <span class="text-sm">Signals Board</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-2.5 text-gray-400 rounded-button hover:bg-gray-800 transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-lightbulb-line"></i>
+              </div>
+              <span class="text-sm">Tips Management</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-2.5 text-gray-400 rounded-button hover:bg-gray-800 transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-user-settings-line"></i>
+              </div>
+              <span class="text-sm">User Permissions</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              class="flex items-center px-4 py-2.5 text-gray-400 rounded-button hover:bg-gray-800 transition-colors"
+            >
+              <div class="w-5 h-5 flex items-center justify-center mr-3">
+                <i class="ri-settings-3-line"></i>
+              </div>
+              <span class="text-sm">Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Online Users Section -->
+      <div class="p-4 border-t border-gray-700">
+        <h4 class="text-xs uppercase text-gray-500 font-medium mb-3">
+          Online Users
+        </h4>
+        <div class="space-y-2">
+          <div class="flex items-center">
+            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-sm">.....</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-sm">.....</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-sm">.....</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+      <!-- Header -->
+      <header
+        class="bg-white border-b border-gray-200 py-3 px-6 flex items-center justify-between"
+      >
+        <div>
+          <h1 class="text-xl font-semibold text-gray-800">Chat Room</h1>
+          <div class="flex items-center text-sm text-gray-500 mt-1">
+            <a href="dashboardfx.html" class="hover:text-primary">Dashboard</a>
+            <span class="mx-2">/</span>
+            <span>Chat Room</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <button
+              class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors relative"
+            >
+              <div class="w-5 h-5 flex items-center justify-center">
+                <i class="ri-notification-3-line"></i>
+              </div>
+              <span
+                class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
+              ></span>
+            </button>
+          </div>
+          <div class="h-8 w-px bg-gray-200"></div>
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"
+            >
+              <span class="font-semibold text-white text-sm" id="P1"></span>
+            </div>
+            <div class="hidden md:block">
+              <h3 class="text-sm font-medium" id="F2"></h3>
+              <p class="text-xs text-gray-500">Administrator</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Container -->
+      <div class="flex-1 flex overflow-hidden">
+        <!-- Chat Section (60%) -->
+        <div class="w-3/5 flex flex-col border-r border-gray-200 bg-white">
+          <!-- Chat Header -->
+          <div
+            class="px-6 py-3 border-b border-gray-200 flex items-center justify-between"
+          >
+            <div class="flex items-center">
+              <h2 class="font-medium">Team Chat</h2>
+              <span
+                class="ml-2 px-2 py-0.5 text-xs bg-green-100 text-green-800 rounded-full"
+                >Live</span
+              >
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-search-line"></i>
+                </div>
+              </button>
+              <button
+                class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-more-2-fill"></i>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat Messages -->
+          <div class="flex-1 overflow-y-auto p-6 space-y-4" id="chat-messages">
+            <!-- Incoming Message -->
+            <div class="flex items-start space-x-3">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-medium text-blue-700">❔</span>
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="font-medium text-sm">bot</span>
+                  <span class="text-xs text-gray-500">10:23 AM</span>
+                </div>
+                <div
+                  class="mt-1 bg-gray-100 p-3 rounded-lg chat-message-in text-sm"
+                >
+                  Good morning team! I've just updated the Bitcoin signal. We're
+                  seeing some strong resistance at $68,500.
+                </div>
+                <div class="mt-1 flex items-center space-x-2">
+                  <button class="text-xs text-gray-500 hover:text-gray-700">
+                    <div class="w-4 h-4 flex items-center justify-center">
+                      <i class="ri-emotion-line"></i>
+                    </div>
+                  </button>
+                  <button class="text-xs text-gray-500 hover:text-gray-700">
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Outgoing Message -->
+            <div class="flex items-start justify-end space-x-3">
+              <div>
+                <div class="flex items-center justify-end space-x-2">
+                  <span class="text-xs text-gray-500">10:25 AM</span>
+                  <span class="font-medium text-sm">You</span>
+                </div>
+                <div
+                  class="mt-1 bg-primary text-white p-3 rounded-lg chat-message-out text-sm"
+                >
+                  Thanks for the update, Sarah. I'll add a tip about this to
+                  alert our premium users. Do you think we should set a stop
+                  loss at $67,200?
+                </div>
+                <div class="mt-1 flex items-center justify-end space-x-2">
+                  <span class="text-xs text-gray-500">Seen</span>
+                </div>
+              </div>
+              <div
+                class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-medium text-white" id="P3"></span>
+              </div>
+            </div>
+
+            <!-- Incoming Message -->
+            <div class="flex items-start space-x-3">
+              <div
+                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-medium text-purple-700">❔</span>
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="font-medium text-sm">bot</span>
+                  <span class="text-xs text-gray-500">10:27 AM</span>
+                </div>
+                <div
+                  class="mt-1 bg-gray-100 p-3 rounded-lg chat-message-in text-sm"
+                >
+                  I agree with the stop loss at $67,200. Also, I've been
+                  tracking Ethereum - it's showing a bullish pattern. Should we
+                  create a new signal for it?
+                </div>
+                <div class="mt-1 flex items-center space-x-2">
+                  <button class="text-xs text-gray-500 hover:text-gray-700">
+                    <div class="w-4 h-4 flex items-center justify-center">
+                      <i class="ri-emotion-line"></i>
+                    </div>
+                  </button>
+                  <button class="text-xs text-gray-500 hover:text-gray-700">
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Incoming Message with Reactions -->
+            <div class="flex items-start space-x-3">
+              <div
+                class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-medium text-green-700">❔</span>
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="font-medium text-sm">bot</span>
+                  <span class="text-xs text-gray-500">10:30 AM</span>
+                </div>
+                <div
+                  class="mt-1 bg-gray-100 p-3 rounded-lg chat-message-in text-sm"
+                >
+                  Just checked the technical indicators for ETH. Strong support
+                  at $3,850 with RSI at 62. Definitely worth creating a signal
+                  with a target of $4,200.
+                </div>
+                <div class="mt-1 flex flex-wrap items-center">
+                  <span
+                    class="mr-2 px-2 py-1 bg-gray-200 rounded-full text-xs flex items-center"
+                  >
+                    👍 2
+                  </span>
+                  <button
+                    class="text-xs text-gray-500 hover:text-gray-700 mr-2"
+                  >
+                    <div class="w-4 h-4 flex items-center justify-center">
+                      <i class="ri-emotion-line"></i>
+                    </div>
+                  </button>
+                  <button class="text-xs text-gray-500 hover:text-gray-700">
+                    Reply
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="flex items-start space-x-3">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0"
+              >
+                <span class="text-xs font-medium text-blue-700">❔</span>
+              </div>
+              <div
+                class="typing-indicator mt-1 bg-gray-100 px-4 py-2 rounded-full inline-block"
+              >
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Input -->
+          <div class="p-4 border-t border-gray-200">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Type your message..."
+                class="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+              />
+              <div
+                class="absolute right-0 top-0 h-full flex items-center pr-3 space-x-1"
+              >
+                <button
+                  class="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-attachment-2"></i>
+                  </div>
+                </button>
+                <button
+                  class="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-emotion-line"></i>
+                  </div>
+                </button>
+                <button
+                  class="p-1.5 rounded-full text-white bg-primary hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap"
+                >
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <i class="ri-send-plane-fill"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel (40%) -->
+        <div class="w-2/5 flex flex-col bg-gray-50">
+          <!-- Signals Board -->
+          <div class="flex-1 overflow-hidden flex flex-col">
+            <div
+              class="px-6 py-3 border-b border-gray-200 bg-white flex items-center justify-between"
+            >
+              <h2 class="font-medium">Signals Board</h2>
+              <button
+                class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <div class="w-5 h-5 flex items-center justify-center">
+                  <i class="ri-refresh-line"></i>
+                </div>
+              </button>
+            </div>
+
+            <div class="overflow-y-auto p-4 space-y-3 flex-1">
+              <!-- Signal Card - Buy -->
+              <div
+                class="signal-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span
+                      class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"
+                      >BUY</span
+                    >
+                    <h3 class="font-medium mt-2">Bitcoin (BTC/USD)</h3>
+                    <p class="text-gray-500 text-sm">
+                      Entry: $68,250 - $68,500
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-lg font-semibold">$68,320</p>
+                    <p class="text-xs text-gray-500">Updated 5 min ago</p>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center"
+                >
+                  <div>
+                    <span class="text-xs text-gray-500">Target: </span>
+                    <span class="text-sm font-medium text-green-600"
+                      >$72,000</span
+                    >
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">Stop: </span>
+                    <span class="text-sm font-medium text-red-600"
+                      >$67,200</span
+                    >
+                  </div>
+                  <div class="flex items-center">
+                    <div
+                      class="w-4 h-4 flex items-center justify-center text-green-500 mr-1"
+                    >
+                      <i class="ri-check-line"></i>
+                    </div>
+                    <span class="text-xs font-medium">92% Success</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signal Card - Sell -->
+              <div
+                class="signal-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span
+                      class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full"
+                      >SELL</span
+                    >
+                    <h3 class="font-medium mt-2">Cardano (ADA/USD)</h3>
+                    <p class="text-gray-500 text-sm">Entry: $0.52 - $0.54</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-lg font-semibold">$0.53</p>
+                    <p class="text-xs text-gray-500">Updated 12 min ago</p>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center"
+                >
+                  <div>
+                    <span class="text-xs text-gray-500">Target: </span>
+                    <span class="text-sm font-medium text-red-600">$0.48</span>
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">Stop: </span>
+                    <span class="text-sm font-medium text-green-600"
+                      >$0.56</span
+                    >
+                  </div>
+                  <div class="flex items-center">
+                    <div
+                      class="w-4 h-4 flex items-center justify-center text-green-500 mr-1"
+                    >
+                      <i class="ri-check-line"></i>
+                    </div>
+                    <span class="text-xs font-medium">88% Success</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signal Card - Buy -->
+              <div
+                class="signal-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span
+                      class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"
+                      >BUY</span
+                    >
+                    <h3 class="font-medium mt-2">Ethereum (ETH/USD)</h3>
+                    <p class="text-gray-500 text-sm">Entry: $3,850 - $3,900</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-lg font-semibold">$3,875</p>
+                    <p class="text-xs text-gray-500">Updated 18 min ago</p>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center"
+                >
+                  <div>
+                    <span class="text-xs text-gray-500">Target: </span>
+                    <span class="text-sm font-medium text-green-600"
+                      >$4,200</span
+                    >
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">Stop: </span>
+                    <span class="text-sm font-medium text-red-600">$3,750</span>
+                  </div>
+                  <div class="flex items-center">
+                    <div
+                      class="w-4 h-4 flex items-center justify-center text-green-500 mr-1"
+                    >
+                      <i class="ri-check-line"></i>
+                    </div>
+                    <span class="text-xs font-medium">94% Success</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Signal Card - Buy -->
+              <div
+                class="signal-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow"
+              >
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span
+                      class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"
+                      >BUY</span
+                    >
+                    <h3 class="font-medium mt-2">Solana (SOL/USD)</h3>
+                    <p class="text-gray-500 text-sm">Entry: $145 - $148</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-lg font-semibold">$146.75</p>
+                    <p class="text-xs text-gray-500">Updated 25 min ago</p>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center"
+                >
+                  <div>
+                    <span class="text-xs text-gray-500">Target: </span>
+                    <span class="text-sm font-medium text-green-600">$160</span>
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500">Stop: </span>
+                    <span class="text-sm font-medium text-red-600">$140</span>
+                  </div>
+                  <div class="flex items-center">
+                    <div
+                      class="w-4 h-4 flex items-center justify-center text-green-500 mr-1"
+                    >
+                      <i class="ri-check-line"></i>
+                    </div>
+                    <span class="text-xs font-medium">90% Success</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick-Add Tip Section -->
+          <div class="border-t border-gray-200 bg-white p-4">
+            <h3 class="font-medium mb-3">Quick Add Tip</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Tip Type</label
+                >
+                <div class="flex space-x-4">
+                  <label class="custom-radio">
+                    <input
+                      type="radio"
+                      name="tip-type"
+                      class="custom-radio-input"
+                      checked
+                    />
+                    <span>Buy Signal</span>
+                  </label>
+                  <label class="custom-radio">
+                    <input
+                      type="radio"
+                      name="tip-type"
+                      class="custom-radio-input"
+                    />
+                    <span>Sell Signal</span>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Asset</label
+                >
+                <div class="relative">
+                  <select
+                    class="w-full pl-3 pr-8 py-2 appearance-none bg-white border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  >
+                    <option>Bitcoin (BTC/USD)</option>
+                    <option>Ethereum (ETH/USD)</option>
+                    <option>Solana (SOL/USD)</option>
+                    <option>Cardano (ADA/USD)</option>
+                    <option>Ripple (XRP/USD)</option>
+                  </select>
+                  <div
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+                  >
+                    <div
+                      class="w-4 h-4 flex items-center justify-center text-gray-500"
+                    >
+                      <i class="ri-arrow-down-s-line"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex space-x-3">
+                <div class="flex-1">
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Entry Price</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                    placeholder="$0.00"
+                  />
+                </div>
+                <div class="flex-1">
+                  <label class="block text-sm font-medium text-gray-700 mb-1"
+                    >Target Price</label
+                  >
+                  <input
+                    type="text"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                    placeholder="$0.00"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Stop Loss</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  placeholder="$0.00"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Priority</label
+                >
+                <div class="flex items-center space-x-4">
+                  <label class="custom-radio">
+                    <input
+                      type="radio"
+                      name="priority"
+                      class="custom-radio-input"
+                    />
+                    <span>Low</span>
+                  </label>
+                  <label class="custom-radio">
+                    <input
+                      type="radio"
+                      name="priority"
+                      class="custom-radio-input"
+                      checked
+                    />
+                    <span>Medium</span>
+                  </label>
+                  <label class="custom-radio">
+                    <input
+                      type="radio"
+                      name="priority"
+                      class="custom-radio-input"
+                    />
+                    <span>High</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between pt-2">
+                <div class="flex items-center">
+                  <label class="custom-switch mr-2">
+                    <input type="checkbox" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+                  <span class="text-sm">Notify all users</span>
+                </div>
+                <div class="flex space-x-2">
+                  <button
+                    class="px-4 py-2 border border-gray-300 rounded-button text-sm hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap"
+                  >
+                    Preview
+                  </button>
+                  <button
+                    class="px-4 py-2 bg-primary text-white rounded-button text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap"
+                  >
+                    Publish Tip
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button
+      id="fab-button"
+      class="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors"
+    >
+      <div class="w-6 h-6 flex items-center justify-center">
+        <i class="ri-add-line ri-lg"></i>
+      </div>
+    </button>
+
+    <!-- Toast Notification -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Modal for Quick Add -->
+    <div
+      id="quick-add-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div
+          class="flex items-center justify-between p-4 border-b border-gray-200"
+        >
+          <h3 class="font-semibold">Add New Signal</h3>
+          <button
+            id="close-modal"
+            class="p-1 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-close-line"></i>
+            </div>
+          </button>
+        </div>
+        <div class="p-4">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Signal Type</label
+              >
+              <div class="flex space-x-4">
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    name="modal-signal-type"
+                    class="custom-radio-input"
+                    checked
+                  />
+                  <span>Buy</span>
+                </label>
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    name="modal-signal-type"
+                    class="custom-radio-input"
+                  />
+                  <span>Sell</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Asset</label
+              >
+              <div class="relative">
+                <select
+                  class="w-full pl-3 pr-8 py-2 appearance-none bg-white border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                >
+                  <option>Bitcoin (BTC/USD)</option>
+                  <option>Ethereum (ETH/USD)</option>
+                  <option>Solana (SOL/USD)</option>
+                  <option>Cardano (ADA/USD)</option>
+                  <option>Ripple (XRP/USD)</option>
+                  <option>Dogecoin (DOGE/USD)</option>
+                  <option>Polkadot (DOT/USD)</option>
+                </select>
+                <div
+                  class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+                >
+                  <div
+                    class="w-4 h-4 flex items-center justify-center text-gray-500"
+                  >
+                    <i class="ri-arrow-down-s-line"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Description</label
+              >
+              <textarea
+                class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                rows="3"
+                placeholder="Add signal details and analysis..."
+              ></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Entry Price</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  placeholder="$0.00"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Entry Range</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  placeholder="$0.00"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Target Price</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  placeholder="$0.00"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Stop Loss</label
+                >
+                <input
+                  type="text"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-sm"
+                  placeholder="$0.00"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Priority</label
+              >
+              <div class="flex items-center space-x-4">
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    name="modal-priority"
+                    class="custom-radio-input"
+                  />
+                  <span>Low</span>
+                </label>
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    name="modal-priority"
+                    class="custom-radio-input"
+                    checked
+                  />
+                  <span>Medium</span>
+                </label>
+                <label class="custom-radio">
+                  <input
+                    type="radio"
+                    name="modal-priority"
+                    class="custom-radio-input"
+                  />
+                  <span>High</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <label class="custom-switch mr-2">
+                <input type="checkbox" checked />
+                <span class="switch-slider"></span>
+              </label>
+              <span class="text-sm">Send notification to all users</span>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 border-t border-gray-200 flex justify-end space-x-2">
+          <button
+            id="cancel-modal"
+            class="px-4 py-2 border border-gray-300 rounded-button text-sm hover:bg-gray-50 transition-colors !rounded-button whitespace-nowrap"
+          >
+            Cancel
+          </button>
+          <button
+            id="save-signal"
+            class="px-4 py-2 bg-primary text-white rounded-button text-sm hover:bg-primary/90 transition-colors !rounded-button whitespace-nowrap"
+          >
+            Save Signal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script id="toast-notification-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        function showToast(message, type = "success") {
+          const toastContainer = document.getElementById("toast-container");
+
+          const toast = document.createElement("div");
+          toast.className =
+            "toast-notification flex items-center p-4 rounded-lg shadow-lg max-w-xs";
+
+          if (type === "success") {
+            toast.classList.add("bg-green-50", "border-l-4", "border-green-500");
+          } else if (type === "error") {
+            toast.classList.add("bg-red-50", "border-l-4", "border-red-500");
+          } else if (type === "warning") {
+            toast.classList.add("bg-yellow-50", "border-l-4", "border-yellow-500");
+          } else if (type === "info") {
+            toast.classList.add("bg-blue-50", "border-l-4", "border-blue-500");
+          }
+
+          const icon = document.createElement("div");
+          icon.className = "w-5 h-5 flex items-center justify-center mr-3";
+
+          if (type === "success") {
+            icon.innerHTML = '<i class="ri-check-line text-green-500"></i>';
+          } else if (type === "error") {
+            icon.innerHTML = '<i class="ri-close-circle-line text-red-500"></i>';
+          } else if (type === "warning") {
+            icon.innerHTML = '<i class="ri-alert-line text-yellow-500"></i>';
+          } else if (type === "info") {
+            icon.innerHTML = '<i class="ri-information-line text-blue-500"></i>';
+          }
+
+          const text = document.createElement("div");
+          text.className = "text-sm text-gray-800";
+          text.textContent = message;
+
+          toast.appendChild(icon);
+          toast.appendChild(text);
+          toastContainer.appendChild(toast);
+
+          setTimeout(() => {
+            toast.remove();
+          }, 3000);
+        }
+
+        // Expose the function globally
+        window.showToast = showToast;
+      });
+    </script>
+
+    <script id="modal-control-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const fabButton = document.getElementById("fab-button");
+        const quickAddModal = document.getElementById("quick-add-modal");
+        const closeModal = document.getElementById("close-modal");
+        const cancelModal = document.getElementById("cancel-modal");
+        const saveSignal = document.getElementById("save-signal");
+
+        fabButton.addEventListener("click", function () {
+          quickAddModal.classList.remove("hidden");
+        });
+
+        closeModal.addEventListener("click", function () {
+          quickAddModal.classList.add("hidden");
+        });
+
+        cancelModal.addEventListener("click", function () {
+          quickAddModal.classList.add("hidden");
+        });
+
+        saveSignal.addEventListener("click", function () {
+          quickAddModal.classList.add("hidden");
+          window.showToast("Signal added successfully!", "success");
+
+          // Simulate adding a new signal to the board
+          setTimeout(() => {
+            const signalsContainer = document.querySelector(
+              ".overflow-y-auto.p-4.space-y-3.flex-1",
+            );
+            const newSignal = document.createElement("div");
+            newSignal.className =
+              "signal-card bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow";
+            newSignal.innerHTML = `
+                              <div class="flex justify-between items-start">
+                                  <div>
+                                      <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">BUY</span>
+                                      <h3 class="font-medium mt-2">Bitcoin (BTC/USD)</h3>
+                                      <p class="text-gray-500 text-sm">Entry: $68,250 - $68,500</p>
+                                  </div>
+                                  <div class="text-right">
+                                      <p class="text-lg font-semibold">$68,320</p>
+                                      <p class="text-xs text-gray-500">Updated just now</p>
+                                  </div>
+                              </div>
+                              <div class="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                                  <div>
+                                      <span class="text-xs text-gray-500">Target: </span>
+                                      <span class="text-sm font-medium text-green-600">$72,000</span>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs text-gray-500">Stop: </span>
+                                      <span class="text-sm font-medium text-red-600">$67,200</span>
+                                  </div>
+                                  <div class="flex items-center">
+                                      <div class="w-4 h-4 flex items-center justify-center text-green-500 mr-1">
+                                          <i class="ri-check-line"></i>
+                                      </div>
+                                      <span class="text-xs font-medium">New</span>
+                                  </div>
+                              </div>
+                          `;
+            signalsContainer.insertBefore(newSignal, signalsContainer.firstChild);
+
+            // Add chat message about the new signal
+            const chatMessages = document.getElementById("chat-messages");
+            const newMessage = document.createElement("div");
+            newMessage.className = "flex items-start justify-end space-x-3";
+            newMessage.innerHTML = `
+                              <div>
+                                  <div class="flex items-center justify-end space-x-2">
+                                      <span class="text-xs text-gray-500">Just now</span>
+                                      <span class="font-medium text-sm">You</span>
+                                  </div>
+                                  <div class="mt-1 bg-primary text-white p-3 rounded-lg chat-message-out text-sm">
+                                      I've just added a new BTC buy signal with entry at $68,250-$68,500. Target is $72,000 with stop loss at $67,200.
+                                  </div>
+                                  <div class="mt-1 flex items-center justify-end space-x-2">
+                                      <span class="text-xs text-gray-500">Sending...</span>
+                                  </div>
+                              </div>
+                              <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                                  <span class="text-xs font-medium text-white">${initials}</span>
+                              </div>
+                          `;
+            chatMessages.appendChild(newMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 300);
+        });
+
+        // Close modal when clicking outside
+        quickAddModal.addEventListener("click", function (e) {
+          if (e.target === quickAddModal) {
+            quickAddModal.classList.add("hidden");
+          }
+        });
+      });
+    </script>
+
+    <script id="chat-interaction-script">
+      document.addEventListener("DOMContentLoaded", function () {
+        const chatInput = document.querySelector(
+          'input[placeholder="Type your message..."]',
+        );
+        const sendButton = chatInput.nextElementSibling.lastElementChild;
+        const chatMessages = document.getElementById("chat-messages");
+
+        function sendMessage() {
+          if (chatInput.value.trim() === "") return;
+
+          const message = chatInput.value;
+          chatInput.value = "";
+
+          const newMessage = document.createElement("div");
+          newMessage.className = "flex items-start justify-end space-x-3";
+          newMessage.innerHTML = `
+                          <div>
+                              <div class="flex items-center justify-end space-x-2">
+                                  <span class="text-xs text-gray-500">Just now</span>
+                                  <span class="font-medium text-sm">You</span>
+                              </div>
+                              <div class="mt-1 bg-primary text-white p-3 rounded-lg chat-message-out text-sm">
+                                  ${message}
+                              </div>
+                              <div class="mt-1 flex items-center justify-end space-x-2">
+                                  <span class="text-xs text-gray-500">Sending...</span>
+                              </div>
+                          </div>
+                          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                              <span class="text-xs font-medium text-white">${initials}</span>
+                          </div>
+                      `;
+          chatMessages.appendChild(newMessage);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+
+          // Simulate response after a delay
+          if (Math.random() > 0.5) {
+            setTimeout(() => {
+              const typingIndicator = document.createElement("div");
+              typingIndicator.className = "flex items-start space-x-3";
+              typingIndicator.innerHTML = `
+                                  <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                      <span class="text-xs font-medium text-purple-700">MC</span>
+                                  </div>
+                                  <div class="typing-indicator mt-1 bg-gray-100 px-4 py-2 rounded-full inline-block">
+                                      <span></span>
+                                      <span></span>
+                                      <span></span>
+                                  </div>
+                              `;
+              chatMessages.appendChild(typingIndicator);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+
+              setTimeout(() => {
+                typingIndicator.remove();
+
+                const response = document.createElement("div");
+                response.className = "flex items-start space-x-3";
+                response.innerHTML = `
+                                      <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                                          <span class="text-xs font-medium text-purple-700">❔</span>
+                                      </div>
+                                      <div>
+                                          <div class="flex items-center space-x-2">
+                                              <span class="font-medium text-sm">bot</span>
+                                              <span class="text-xs text-gray-500">Just now</span>
+                                          </div>
+                                          <div class="mt-1 bg-gray-100 p-3 rounded-lg chat-message-in text-sm">
+                                              Got it. I'll review the latest market data and update our analysis accordingly.
+                                          </div>
+                                          <div class="mt-1 flex items-center space-x-2">
+                                              <button class="text-xs text-gray-500 hover:text-gray-700">
+                                                  <div class="w-4 h-4 flex items-center justify-center">
+                                                      <i class="ri-emotion-line"></i>
+                                                  </div>
+                                              </button>
+                                              <button class="text-xs text-gray-500 hover:text-gray-700">Reply</button>
+                                          </div>
+                                      </div>
+                                  `;
+                chatMessages.appendChild(response);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+              }, 2000);
+            }, 1000);
+          }
+        }
+
+        sendButton.addEventListener("click", sendMessage);
+
+        chatInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+        // Make chat messages scrollable to bottom on load
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      });
+    </script>
+    <script>
+      const entryInput = document.querySelector('input[placeholder="$0.00"]');
+if (isNaN(parseFloat(entryInput.value))) {
+  window.showToast("Please enter a valid number", "error");
+  return;
+}
+
+    </script>
+    <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const role = localStorage.getItem("role") || "user"; // default to user
+
+    if (role !== "admin") {
+      // Hide Admin Controls
+      const adminElements = [
+        document.querySelector(".border-t.bg-white.p-4"), // Quick Add Tip Section
+        document.getElementById("fab-button"),
+        document.getElementById("quick-add-modal")
+      ];
+
+      adminElements.forEach(el => {
+        if (el) el.classList.add("hidden");
+      });
+
+      // Optional: Prevent modal script from executing if user somehow triggers it
+      const saveSignalBtn = document.getElementById("save-signal");
+      if (saveSignalBtn) {
+        saveSignalBtn.disabled = true;
+      }
+    }
+  });
+</script>
+
+
+<script>
+  const fullname = localStorage.getItem("ADMIN");
+  const nme = fullname.toUpperCase();
+  document.getElementById("F1").textContent = nme ;
+    document.getElementById("F2").textContent = nme ;
+  document.getElementById("f1").textContent = nme ;
+
+</script>
+
+<script>
+  function getInitials(name) {
+    const words = name.trim().split(" ");
+    const initials = words.map(word => word[0].toUpperCase()).join("");
+    return initials;
+  }
+
+  const fullName = localStorage.getItem("ADMIN");
+  
+
+  if (fullName) {
+     window.initials = getInitials(fullName);
+    
+    document.getElementById("P1").textContent = initials;
+    document.getElementById("P2").textContent = initials;
+    document.getElementById("P3").textContent = initials;
+    
+
+
+
+    
+  } else {
+    document.getElementById("P1").textContent = "user";
+  }
+</script>
+
+  </body>
+
+ 
+
+</html>

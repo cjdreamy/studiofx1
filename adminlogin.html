@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin-Login</title>
+    <script src="https://unpkg.com/@iconify-icon/react"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen px-4">
+    <div
+      class="bg-white shadow-xl rounded-2xl w-full max-w-md p-8 space-y-6 animate-fadeIn"
+    >
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+        <p class="text-sm text-gray-500">Login to access Admin Rigts</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <!-- Username -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Username</label
+          >
+          <input
+            type="text"
+            id="username"
+            class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Password</label
+          >
+          <input
+            type="password"
+            id="password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        <!-- Passcode (Admin Key) -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"
+            >Access Passcode</label
+          >
+          <input
+            type="text"
+            id="passcode"
+            placeholder="Enter Admin Key"
+            class="w-full px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors"
+        >
+          Login
+        </button>
+      </form>
+
+      <p class="text-xs text-center text-gray-400">
+        &copy; 2025 StudioFX. All rights reserved.
+      </p>
+    </div>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const passcode = document.getElementById("passcode").value.trim();
+
+          // Set role based on passcode
+          if (passcode === "studiofx") {
+            localStorage.setItem("role", "admin");
+            const kiongosi = document.getElementById("username").value.trim();
+            localStorage.setItem('ADMIN', kiongosi);
+            window.location.href = 'chat.html';
+          } else {
+            localStorage.setItem("role", "user");
+            window.location.href = 'indexlogin.html';
+          }
+
+          // Optionally store username or password (not recommended in plaintext)
+          // localStorage.setItem("username", document.getElementById("username").value);
+
+          
+        });
+    </script>
+  </body>
+</html>

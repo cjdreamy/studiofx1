@@ -1,0 +1,83 @@
+ /* <style START of styles for indexlogin> */
+      :where([class^="ri-"])::before { content: "\f3c2"; }
+
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes floatAnimation {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0); }
+      }
+
+      .animate-fadeIn {
+          animation: fadeIn 0.8s ease-in forwards;
+      }
+
+      .animate-float {
+          animation: floatAnimation 6s ease-in-out infinite;
+      }
+
+      .gradient-text {
+          background: linear-gradient(90deg, #0075C9, #1A3A5A);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+      }
+
+      /* .hero-gradient {
+          background: linear-gradient(135deg, rgba(0,117,201,0.9), rgba(26,58,90,0.85)); 
+          
+      } */
+      #bb{
+        background-image: url('./images/studiofx.jpg'); 
+          background-size: cover; background-position: center;
+      }
+
+      .input-valid {
+          border-color: #10B981;
+      }
+
+      .input-invalid {
+          border-color: #EF4444;
+      }
+
+      .custom-shadow {
+          box-shadow: 0 10px 25px -5px rgba(0, 117, 201, 0.25);
+      }
+
+      html {
+          scroll-behavior: smooth;
+      }
+
+      body {
+          overflow-x: hidden;
+      }
+
+      .feature-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 30px -10px rgba(0, 117, 201, 0.3);
+      }
+      #signUp{
+        display: none;
+      }
+      @media(max-width: 479px) and (max-width: 769px){
+        #signUp{
+          display: block;
+        }
+      }
+      .alert{
+        color: red;
+      }
+      #login{
+        display: none;
+    }
+    #lbutton{
+        color: blue;
+        background-color: transparent;
+        text-decoration: underline;
+        border: 0;
+    }
+    /* </ END of styles for indexlogin> */
