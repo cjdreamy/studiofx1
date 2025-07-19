@@ -3,24 +3,17 @@
 
 
 // handling signupform
-window.onload = function() {
-  //  function bindings here
-
 
         function show(){
-                
             document.getElementById("signUp").style.display = 'block' ;
-            document.getElementById("login").style.display = 'none' ;
-
+            document.getElementById("login").style.display = 'none' ; 
         }
 
         function showlogin(){
           document.getElementById("signUp").style.display = 'none' ; 
-           document.getElementById("login").style.display = 'block' ;      
-
-          // document.getElementById("login").classList.remove("hidden");
+          document.getElementById("login").style.display = 'block' ;
         }
-}
+
   // end of handling signupform
       
 
