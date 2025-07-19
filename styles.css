@@ -63,6 +63,7 @@
       #signUp{
         display: none;
       }
+
       @media(max-width: 479px) and (max-width: 769px){
         #signUp{
           display: block;
