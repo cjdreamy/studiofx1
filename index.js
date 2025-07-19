@@ -5,12 +5,15 @@
 // handling signupform
 
         function show(){
-            document.getElementById("signUp").style.display = 'block' ;
+                document.getElementById("signUp").classList.remove("hidden");
+            // document.getElementById("signUp").style.display = 'block' ;
             document.getElementById("login").style.display = 'none' ; 
         }
 
         function showlogin(){
-          document.getElementById("signUp").style.display = 'none' ; 
+          // document.getElementById("signUp").style.display = 'none' ; 
+                document.getElementById("signUp").classList.add("hidden");
+
           document.getElementById("login").style.display = 'block' ;
         }
 
