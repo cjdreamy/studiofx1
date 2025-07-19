@@ -3,6 +3,9 @@
 
 
 // handling signupform
+window.onload = function() {
+  //  function bindings here
+
 
         function show(){
                 document.getElementById("signUp").classList.remove("hidden");
@@ -17,7 +20,7 @@
 
           document.getElementById("login").classList.remove("hidden");
         }
-
+}
   // end of handling signupform
       
 
