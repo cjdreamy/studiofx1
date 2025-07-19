@@ -60,9 +60,9 @@
           transform: translateY(-5px);
           box-shadow: 0 15px 30px -10px rgba(0, 117, 201, 0.3);
       }
-      #signUp{
+/*       #signUp{
         display: none;
-      }
+      } */
 
       @media(max-width: 479px) and (max-width: 769px){
         #signUp{
@@ -72,9 +72,9 @@
       .alert{
         color: red;
       }
-      #login{
+/*       #login{
         display: none;
-    }
+    } */
     #lbutton{
         color: blue;
         background-color: transparent;
