@@ -26,6 +26,8 @@
         },
       };
     </script>
+    <link rel="stylesheet" href="chat.css" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -167,10 +169,128 @@
           border-radius: 50%;
       }
     </style>
+    <style>
+
+      /* Make sidebar collapsible on small screens */
+@media (max-width: 768px) {
+  aside {
+    position: absolute;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    width: 240px;
+  }
+
+  aside.show {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .hidden-md {
+    display: none;
+  }
+
+  .show-md {
+    display: block;
+  }
+}
+
+/* Adjust text and layout spacing for small screens */
+@media (max-width: 640px) {
+  h1,
+  h3,
+  .text-xl {
+    font-size: 1.125rem;
+  }
+
+  .text-sm {
+    font-size: 0.875rem;
+  }
+
+  .text-xs {
+    font-size: 0.75rem;
+  }
+
+  .px-6 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .py-3 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  #F2,
+  #F1 {
+    font-size: 0.9rem;
+  }
+
+  #P1,
+  #P2 {
+    font-size: 0.85rem;
+  }
+
+  .space-x-4 {
+    gap: 0.5rem;
+  }
+
+  .space-x-3 {
+    gap: 0.5rem;
+  }
+
+  .w-10, .h-10, .w-9, .h-9 {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+/* Ensure the sidebar doesn't stretch the screen when hidden */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .scrollbar-hide {
+    overflow: auto;
+  }
+}
+@media (max-width: 768px) {
+  aside {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  aside.show {
+    transform: translateX(0);
+  }
+}
+
+
+    </style>
   </head>
   <body class="bg-gray-50 h-screen flex overflow-hidden">
     <!-- Sidebar -->
+
+    
     <aside class="w-64 h-screen bg-[#1E1E2D] text-white flex flex-col">
+
+      <!-- Inside your <aside> -->
+<div class="flex justify-end md:hidden p-2">
+  <button onclick="document.querySelector('aside').classList.remove('show')">
+    <i class="ri-close-line text-2xl text-gray-500"></i>
+  </button>
+</div>
+
       <!-- Profile Section -->
       <div class="p-4 border-b border-gray-700 flex items-center space-x-3">
         <div
@@ -186,6 +306,8 @@
 
       <!-- Navigation Menu -->
       <nav class="flex-1 overflow-y-auto scrollbar-hide py-4">
+
+
         <ul class="space-y-1 px-2">
           <li>
             <a
@@ -284,6 +406,15 @@
       <header
         class="bg-white border-b border-gray-200 py-3 px-6 flex items-center justify-between"
       >
+
+      <!-- for small screens -->
+<button
+  class="md:hidden text-gray-600 hover:text-primary"
+  onclick="document.querySelector('aside').classList.toggle('show')"
+>
+  <i class="ri-menu-line text-2xl"></i>
+</button>
+
         <div>
           <h1 class="text-xl font-semibold text-gray-800">Chat Room</h1>
           <div class="flex items-center text-sm text-gray-500 mt-1">
@@ -1395,6 +1526,27 @@ if (isNaN(parseFloat(entryInput.value))) {
     document.getElementById("P1").textContent = "user";
   }
 </script>
+
+<script>
+  const sidebar = document.querySelector("aside");
+  const toggleBtn = document.getElementById("toggleSidebar");
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("show");
+  });
+
+  // Optional: close sidebar when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      sidebar.classList.contains("show") &&
+      !sidebar.contains(e.target) &&
+      !toggleBtn.contains(e.target)
+    ) {
+      sidebar.classList.remove("show");
+    }
+  });
+</script>
+
 
   </body>
 
