@@ -8,17 +8,17 @@ window.onload = function() {
 
 
         function show(){
-                document.getElementById("signUp").classList.remove("hidden");
-            // document.getElementById("signUp").style.display = 'block' ;
-           document.getElementById("login").classList.add("hidden");
+                
+            document.getElementById("signUp").style.display = 'block' ;
+            document.getElementById("login").style.display = 'none' ;
 
         }
 
         function showlogin(){
-          // document.getElementById("signUp").style.display = 'none' ; 
-                document.getElementById("signUp").classList.add("hidden");
+          document.getElementById("signUp").style.display = 'none' ; 
+           document.getElementById("login").style.display = 'block' ;      
 
-          document.getElementById("login").classList.remove("hidden");
+          // document.getElementById("login").classList.remove("hidden");
         }
 }
   // end of handling signupform
